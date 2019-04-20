@@ -52,6 +52,39 @@ router.post('/register', (req, res) => {
 });
 
 /**
+ * @route   POST api/user/login
+ * @desc    Login user / returning JWT (https://velopert/com/2389)
+ * @access  Public
+ */
+router.post('/login', (req, res) =>{
+    const email = req.body.email;
+    const password = req.body.password;
+
+    //Find user by email
+    userModel.findOne({email})
+        .then(user => {
+            if(!user){ //존재 x
+                return res.status(404).json({
+                    msg: "User Not Found"
+                });
+            }else{ //존재 0
+                bcrypt
+                    .compare(password, user.password) //bcriypt 함수 입력한 값이랑 db에 등록되어 있는 hash 값
+                    .then(isMatch =>{
+                        if(isMatch){//일치 한다면
+                            res.json({msg: 'Sucess'})
+                        }else{
+                            return res.status(404).json({
+                                msg: "password incorreted"
+                            });
+                        }
+                    })
+            }
+        })
+        .catch(err => res.json(err))
+})
+
+/**
  * @route   GET api/user/test
  * @desc    Test user route
  * @access  Public
