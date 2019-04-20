@@ -3,6 +3,10 @@ const router = express.Router();
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 
+//jwt 변수
+const jwt = require('jsonwebtoken');
+const keys = require('../../config/keys');
+
 const userModel = require('../../models/userModel');
 
 /**
@@ -72,7 +76,23 @@ router.post('/login', (req, res) =>{
                     .compare(password, user.password) //bcriypt 함수 입력한 값이랑 db에 등록되어 있는 hash 값
                     .then(isMatch =>{
                         if(isMatch){//일치 한다면
-                            res.json({msg: 'Sucess'})
+                            //res.json({msg: 'Sucess'})
+
+                            //jwt start
+                            const payload = {id: user, name: user.name, avatar: user.avatar};
+
+                            //Sign Token
+                            jwt.sign(
+                                payload,
+                                keys.secretOrkey,
+                                {expiresIn: 3600},
+                                (err,token) => {
+                                    res.json({
+                                        success: true,
+                                        token: 'Bearer ' + token// bearer 는 헤더에 넣어주는 건데, 다른거 넣어도 됌 
+                                    })
+                                }
+                            )
                         }else{
                             return res.status(404).json({
                                 msg: "password incorreted"
