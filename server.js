@@ -1,7 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')// request.body 쓸수 있음
-
+const passport = require('passport') //possport 설정
 
 /** routing 경로 */
 const userRouter = require('./routes/api/userRouter');
@@ -18,6 +18,10 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+//passport middlewears
+app.use(passport.initialize()); //passport 초기화
+//passport conifg
+require('./config/passport')(passport);
 
 /** use route */
 app.use('/api/user', userRouter);
