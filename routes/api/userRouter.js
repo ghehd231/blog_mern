@@ -13,19 +13,32 @@ const authCheck = passport.authenticate('jwt', {session: false});
 
 const userModel = require('../../models/userModel');
 
+//validator
+const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
+
 /**
  * @route   POST api/user/register
  * @desc    Register user
  * @access  Public
  */
 router.post('/register', (req, res) => {
+    //validate
+    const {errors, isValid} = validateRegisterInput(req.body);
+    //check validation
+    if(!isValid){
+        return res.status(400).json(errors);
+    }
     userModel
         .findOne({email: req.body.email})
         .then(user => {
             if(user){
-                return res.status(400).json({
+                /*return res.status(400).json({
                     msg: 'Email already exists'
                 });
+                */
+               errors.email = 'Email already exists';
+               return res.status(400).json(errors);
             }else{
                 // Create avatar
                 // http://www.gravatar.com/avatar/56a0311c22d8e7b6d152ca6b90aa2e46?s=200&r=pg&d=mm 대충 이런식으로 주소가 만들어짐.
@@ -68,13 +81,24 @@ router.post('/login', (req, res) =>{
     const email = req.body.email;
     const password = req.body.password;
 
+    //validate
+    const {errors, isValid} = validateLoginInput(req.body);
+    //check validation
+    if(!isValid){
+        return res.status(400).json(errors);
+    }
+
     //Find user by email
     userModel.findOne({email})
         .then(user => {
             if(!user){ //존재 x
-                return res.status(404).json({
+               /* return res.status(404).json({
                     msg: "User Not Found"
                 });
+                */
+               errors.email = 'user not found ';
+               return res.status(400).json(errors);
+
             }else{ //존재 0
                 bcrypt
                     .compare(password, user.password) //bcriypt 함수 입력한 값이랑 db에 등록되어 있는 hash 값
@@ -98,9 +122,11 @@ router.post('/login', (req, res) =>{
                                 }
                             )
                         }else{
-                            return res.status(404).json({
+                            /*return res.status(404).json({
                                 msg: "password incorreted"
-                            });
+                            });*/
+                            errors.email = 'password incorreted';
+                            return res.status(400).json(errors);
                         }
                     })
             }
