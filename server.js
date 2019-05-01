@@ -10,6 +10,7 @@ const postRouter = require('./routes/api/postRouter');
 
 const app = express();
 
+console.log(app);
 
 /**
  * @desc    body-parser setting
