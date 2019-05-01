@@ -34,6 +34,69 @@ router.get('/', authCheck, (req, res) => {
 });
 
 /**
+ * @route   GET api/profile/all
+ * @desc    Get all profiles
+ * @access  Public
+ */
+router.get('/all', (req, res) =>{
+    const errors = {};
+
+    profileModel.find()
+        .populate('user', ['name', 'avatar'])//어떤 정보를 불러올꺼나..근데 name, avatar를 기준으로 불러옴. RDB에서 WHERE이랑 비슷한 개념
+        .then(profile => { 
+            if(!profile){
+                errors.noprofile = 'There are no profiles';
+                return res.status(404).json(errors);
+            }
+            res.json(profiles);
+        })
+        .catch(err => res.status(404).json({
+            profile : "There are no profiles" //프로필 정보가 없을때
+        }));
+});
+
+/**
+ * @route   GET api/profile/handle/:handle
+ * @desc    Get profile by handle
+ * @access  Public
+ */
+router.get('/handle/:handle', (req, res) => {
+    const errors = {};
+
+    profileModel.find({handle: req.params.handle})//지금은 정확히 일치하는 것만 찾음 
+        .populate('user', ['name', 'avatar'])
+        .then(profile => {
+            if(!profile){
+                errors.noprofile = "There is no profile for this user";
+                return res.status(404).json(errors);
+            }
+            res.json(profile);
+        })
+        .catch(err => res.status(404).json(err));
+})
+
+/**
+ * @route   GET api/profile/user/:user_id
+ * @desc    Get profile by user_id
+ * @access  Public
+ */
+router.get('/user/:user_id', (res, req) =>{
+    const errors = {};
+
+    profileModel.findOne({user: req.params.user_id})
+        .populate('user', ['name', 'avatar'])
+        .then(profile => {
+            if(!profile){
+                errors.noprofile = 'There is no profile for this user';
+                return res.status(404).json(errors);
+            }
+            res.json(profile);
+        })
+        .catch(err => res.status(404).json(err));
+});
+
+
+/**
  * @route   POST api/profile
  * @desc    Create or edit user profile
  * @access  Private

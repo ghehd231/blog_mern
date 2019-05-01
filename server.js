@@ -42,6 +42,8 @@ mongoose.connect(db, { useNewUrlParser: true, useCreateIndex: true})
     .catch(err => console.log('err'));
 
 
+mongoose.set('userFindAndModify', false); // 이것도 안해줘도 됨. 걍 옵션임.
+
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => console.log(`server running on port ${port}`));
