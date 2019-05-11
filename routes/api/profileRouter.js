@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 
 const validateProfileInput = require('../../validation/profile');
+const validateEducationInput = require('../../validation/education');
+const validateExperienceInput = require('../../validation/experience');
 
 const profileModel = require('../../models/profileModel');
 const userModel = require('../../models/userModel');
@@ -169,5 +171,97 @@ router.post('/', authCheck, (req, res) => {
         .catch(err => res.json(err));
 
 });
+
+
+/**
+ * @route   GET api/profile/experience
+ * @desc    Get experience by profile
+ * @access  Private
+ */
+router.post('/experience', authCheck, (req, res) =>{ //authCheck 는 로그인했는지 검사해서 값가져오는 거
+    const {errors, isValid} = validateExperienceInput(req.body);
+
+    //check validation
+    if(!isValid){
+        return res.status(400).json(errors);
+    }
+
+    profileModel.findOne({user: req.user.id})
+        .then(profile => {
+            const newExp = {
+                title: req.body.title,
+                company: req.body.company,
+                location: req.body.location,
+                from: req.body.from,
+                to: req.body.to,
+                current: req.body.current,
+                description: req.body.description
+            }
+
+            /*add to exp array
+            profileModel.experience.shift(newExp); //배열을 차곡차곡 순서대로 저장
+            profileModel
+                .save()
+                .then(profile => res.json(profile))
+                .catch(err => res.status(400).json(err));
+            */
+           //검색결과로 뽑아낸 profile 의 experience 의 값 수정
+           profile.experience = profile.experience.unshift(newExp); // 새로운값 + 기존값 (축적)
+           const updateProfile = new profileModel(profile);
+            
+
+           updateProfile
+               .save()
+               .then(profile => {
+                   res.json(profile);
+               })
+               .catch(err => {
+                   res.status(404).json(err);
+               });
+        })
+        .catch(err => res.status(404).json(err));
+
+})
+
+/**
+ * @route   GET api/profile/Education
+ * @desc    Get Education by profile
+ * @access  Private
+ */
+router.post('/education', authCheck, (req, res) =>{ //authCheck 는 로그인했는지 검사해서 값가져오는 거
+    const {errors, isValid} = validateEducationInput(req.body);
+
+    //check validation
+    if(!isValid){
+        return res.status(400).json(errors);
+    }
+
+    profileModel.findOne({user: req.user.id})
+        .then(profile => {
+            const newEdu = {
+                school: req.body.school,
+                degree: req.body.degree,
+                fieldofstudy: req.body.fieldofstudy,
+                from: req.body.from,
+                to: req.body.to,
+                current: req.body.current,
+                description: req.body.description
+            }
+
+           profile.education = profile.education.unshift(newEdu); // 새로운값 + 기존값 (축적)
+           const updateProfile = new profileModel(profile);
+            
+           updateProfile
+               .save()
+               .then(profile => {
+                   res.json(profile);
+               })
+               .catch(err => {
+                   res.status(404).json(err);
+               });
+        })
+        .catch(err => res.status(404).json(err));
+
+})
 
 module.exports = router;
