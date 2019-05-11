@@ -10,8 +10,6 @@ const postRouter = require('./routes/api/postRouter');
 
 const app = express();
 
-console.log(app);
-
 /**
  * @desc    body-parser setting
  * @access  Public
@@ -44,6 +42,6 @@ mongoose.connect(db, { useNewUrlParser: true, useCreateIndex: true})
 
 mongoose.set('userFindAndModify', false); // 이것도 안해줘도 됨. 걍 옵션임.
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`server running on port ${port}`));

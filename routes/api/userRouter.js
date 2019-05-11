@@ -78,8 +78,7 @@ router.post('/register', (req, res) => {
  * @access  Public
  */
 router.post('/login', (req, res) =>{
-    const email = req.body.email;
-    const password = req.body.password;
+    const { email, password } = req.body;
 
     //validate
     const {errors, isValid} = validateLoginInput(req.body);
@@ -112,7 +111,7 @@ router.post('/login', (req, res) =>{
                             //Sign Token
                             jwt.sign(
                                 payload,
-                                keys.secretOrkey,
+                                keys.secretOrKey,
                                 {expiresIn: 3600},
                                 (err,token) => {
                                     res.json({
@@ -121,6 +120,7 @@ router.post('/login', (req, res) =>{
                                     })
                                 }
                             )
+
                         }else{
                             /*return res.status(404).json({
                                 msg: "password incorreted"
