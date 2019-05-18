@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// Create Schema
 const ProfileSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
@@ -109,7 +108,7 @@ const ProfileSchema = new Schema({
         },
         instagram: {
             type: String
-        }
+        },
     },
     date: {
         type: Date,
@@ -117,5 +116,4 @@ const ProfileSchema = new Schema({
     }
 });
 
-module.exports = Profile = mongoose.model('profile', ProfileSchema); 
-  
+module.exports = Profile = mongoose.model('profile', ProfileSchema);
