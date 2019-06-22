@@ -31,9 +31,9 @@ export const registerUser = (userData, history) => dispatch => {
 };
 
 //login - get user token 
-export const LoginUser = userData => dispatch => {
+export const loginUser = userData => dispatch => {
     axios  
-        .post('/api/users/login', userData)
+        .post('/api/user/login', userData)
         .then(res => {
             //save to localstorage
             const {token} = res.data;
