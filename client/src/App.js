@@ -17,7 +17,7 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 
 //check for token
-if(localStorage.jwtToken){
+if(localStorage.jwtToken !== 'undefined'){
   //Set auth token header auth
   setAuthToken(localStorage.jwtToken);
 
